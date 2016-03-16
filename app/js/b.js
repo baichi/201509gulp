@@ -1,1 +1,1 @@
-define();
+var c=2;

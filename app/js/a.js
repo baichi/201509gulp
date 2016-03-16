@@ -1,1 +1,1 @@
-define();
+console.log(bb);
