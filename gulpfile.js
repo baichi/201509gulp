@@ -1,19 +1,24 @@
 var gulp = require('gulp');
-var fs = require('fs');
-
-gulp.task('copy-images',function(){
-
-    //gulp.src('app/imgs/*.png').pipe(gulp.dest('dist'));
-
-    // {png,jpg} 表示大括号中的任何一个
-    //也可以使用一个数组，表示数组中的任何一个
-    gulp.src(['app/imgs/**/*.{png,jpg,bmp}']).pipe(gulp.dest('dist'));
-
-   //路径前加一个！表示排除掉这个文件
-   // gulp.src(['app/js/*.js','!app/js/tmp.js']).pipe(gulp.dest('dist'));
+//引入connect插件
+var connect = require('gulp-connect');
+//拷贝html并通知浏览器重启
+gulp.task('copy-html',function(){
+    gulp.src('app/index.html')//指定源文件
+        .pipe(gulp.dest('dist'))//拷贝到dist目录
+        .pipe(connect.reload());//通知浏览器重启
+});
+//监控文件变化,当监控的文件发生变化时执行相应的任务
+gulp.task('watch',function(){
+    gulp.watch('app/index.html',['copy-html']);//当index.html文件变化时执行copy-html任务
 });
 
-gulp.task('watch-images',function(){
-
-   gulp.watch('app/imgs/**/*.{png,jpg,bmp}',['copy-images']);
+//定义一个服务
+gulp.task('server',function(){
+    connect.server({
+        root:'dist',//服务器的根目录
+        port:8080, //服务器的地址，没有此配置项默认也是 8080
+        livereload:true//启用实时刷新的功能
+    });
 });
+
+gulp.task('default',['server','watch']);//运行此任务的时候会在8080上启动服务器，
