@@ -1,14 +1,21 @@
 var gulp = require('gulp');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
+var less = require('gulp-less');
+//在文件的顶部去包含这个插件，起个名字，叫做 minify
+var minify = require('gulp-minify-css');
+//引入重命名的插件
 var rename = require('gulp-rename');
-gulp.task('uglify',function(){
-    return gulp.src(['app/js/*.js','!app/js/*.tmp.js'])//指定要处理的文件
-        .pipe(concat('app.js'))//合并成一个文件
-        .pipe(gulp.dest('dist/js'))//保存此文件
-        .pipe(uglify())//进行压缩
-        .pipe(rename('app.min.js'))//对此文件进行重命名
-        .pipe(gulp.dest('dist/js'));//再输出一次
+
+gulp.task('minify',function(){
+    return gulp.src('less/**/*.less')//指定 less文件
+        .pipe(less())//把less编译成css
+        .pipe(gulp.dest('dist/css'))//输出到目的地
+        .pipe(minify())//对 css再进行压缩
+        .pipe(rename(function (path) {
+            //path.dirname += "/min"; //目录名
+            path.basename += ".min";//文件名
+            //path.extname = ".md" //扩展名文件后缀
+        }))//重命名
+        .pipe(gulp.dest('dist/css'));//输出到目的地
 });
 
-gulp.task('default',['uglify']);
+gulp.task('default',['minify']);
